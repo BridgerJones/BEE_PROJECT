@@ -20,7 +20,7 @@ def load(file_name):
     return obj
 
 ## Paths to all datasets. Change accordingly.
-PATH = '/home/vladimir/teaching/AI/project_01/datasets/tflearn/'
+PATH = './data/'
 BEE1_gray_base_path    = PATH + 'BEE1_gray/'
 BEE2_1S_gray_base_path = PATH + 'BEE2_1S_gray/'
 BEE4_gray_base_path    = PATH + 'BEE4_gray/'
@@ -127,7 +127,7 @@ def load_image_ann_model(model_path):
     model.load(model_path)
     return model
 
-### test a tfl network model on valid_X and valid_Y.  
+### test a tfl network model on valid_X and valid_Y.
 def test_tfl_image_ann_model(network_model, valid_X, valid_Y):
     results = []
     for i in range(len(valid_X)):
@@ -138,7 +138,7 @@ def test_tfl_image_ann_model(network_model, valid_X, valid_Y):
 
 ###  train a tfl model on train_X, train_Y, test_X, test_Y.
 def train_tfl_image_ann_model(model, train_X, train_Y, test_X, test_Y, num_epochs=2, batch_size=10):
-  tf.reset_default_graph()
+  tf.compat.v1.reset_default_graph()
   model.fit(train_X, train_Y, n_epoch=num_epochs,
             shuffle=True,
             validation_set=(test_X, test_Y),
@@ -150,4 +150,15 @@ def train_tfl_image_ann_model(model, train_X, train_Y, test_X, test_Y, num_epoch
 def validate_tfl_image_ann_model(model, valid_X, valid_Y):
     return test_tfl_image_ann_model(model, valid_X, valid_Y)
 
-  
+
+# Training and Saving Pipeline
+def pipeline():
+    img_ann = make_image_ann_model()
+    # Train it on BEE1_gray
+    train_tfl_image_ann_model(img_ann, BEE1_gray_train_X, BEE1_gray_train_Y, BEE1_gray_test_X, BEE1_gray_test_Y)
+    # Validate BEE1_GRAY
+    validate_tfl_image_ann_model(img_ann, BEE1_gray_valid_X, BEE1_gray_valid_Y)
+
+
+# Execute pipeline
+pipeline()

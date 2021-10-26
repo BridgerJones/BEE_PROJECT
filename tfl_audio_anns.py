@@ -126,7 +126,7 @@ def load_audio_ann_model(model_path):
     model.load(model_path)
     return model
 
-### test a tfl network model on valid_X and valid_Y.  
+### test a tfl network model on valid_X and valid_Y.
 def test_tfl_audio_ann_model(network_model, valid_X, valid_Y):
     results = []
     for i in range(len(valid_X)):
@@ -137,7 +137,7 @@ def test_tfl_audio_ann_model(network_model, valid_X, valid_Y):
 
 ###  train a tfl model on train_X, train_Y, test_X, test_Y.
 def train_tfl_audio_ann_model(model, train_X, train_Y, test_X, test_Y, num_epochs=2, batch_size=10):
-  tf.reset_default_graph()
+  tf.compat.v1.reset_default_graph()
   model.fit(train_X, train_Y, n_epoch=num_epochs,
             shuffle=True,
             validation_set=(test_X, test_Y),
@@ -148,5 +148,3 @@ def train_tfl_audio_ann_model(model, train_X, train_Y, test_X, test_Y, num_epoch
 ### validating is testing on valid_X and valid_Y.
 def validate_tfl_audio_ann_model(model, valid_X, valid_Y):
     return test_tfl_audio_ann_model(model, valid_X, valid_Y)
-
-  

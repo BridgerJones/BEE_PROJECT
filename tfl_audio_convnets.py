@@ -144,7 +144,7 @@ def test_tfl_audio_convnet_model(network_model, valid_X, valid_Y):
 
 ###  train a tfl model on train_X, train_Y, test_X, test_Y.
 def train_tfl_audio_convnet_model(model, train_X, train_Y, test_X, test_Y, num_epochs=2, batch_size=10):
-  tf.reset_default_graph()
+  tf.compat.v1.reset_default_graph()
   model.fit(train_X, train_Y, n_epoch=num_epochs,
             shuffle=True,
             validation_set=(test_X, test_Y),
