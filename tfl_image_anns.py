@@ -153,12 +153,29 @@ def validate_tfl_image_ann_model(model, valid_X, valid_Y):
 
 # Training and Saving Pipeline
 def pipeline():
+    epochs = 50
+
     img_ann = make_image_ann_model()
     # Train it on BEE1_gray
-    train_tfl_image_ann_model(img_ann, BEE1_gray_train_X, BEE1_gray_train_Y, BEE1_gray_test_X, BEE1_gray_test_Y)
+    train_tfl_image_ann_model(img_ann, BEE1_gray_train_X, BEE1_gray_train_Y, BEE1_gray_test_X, BEE1_gray_test_Y, num_epochs=epochs)
     # Validate BEE1_GRAY
-    validate_tfl_image_ann_model(img_ann, BEE1_gray_valid_X, BEE1_gray_valid_Y)
+    print("BEE1_gray", validate_tfl_image_ann_model(img_ann, BEE1_gray_valid_X, BEE1_gray_valid_Y))
 
+    # Train it on BEE2_1S_gray
+    train_tfl_image_ann_model(img_ann, BEE2_1S_gray_train_X, BEE2_1S_gray_train_Y, BEE2_1S_gray_test_X, BEE2_1S_gray_test_Y, num_epochs=epochs)
 
+    # Validate BEE2_1S_gray
+    print("BEE2_1S_gray", validate_tfl_image_ann_model(img_ann, BEE2_1S_gray_valid_X, BEE2_1S_gray_valid_Y))
+
+    # Train it on BEE4_gray
+    train_tfl_image_ann_model(img_ann, BEE4_gray_train_X, BEE4_gray_train_Y, BEE4_gray_test_X, BEE4_gray_test_Y, num_epochs=epochs)
+
+    # Validate BEE4_gray
+    print("BEE4_gray", validate_tfl_image_ann_model(img_ann, BEE4_gray_valid_X, BEE4_gray_valid_Y))
+
+    img_ann.save("models/img_ann.tfl")
 # Execute pipeline
-pipeline()
+def main():
+    pipeline()
+if __name__ == '__main__':
+    main()

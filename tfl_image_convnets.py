@@ -20,7 +20,7 @@ def load(file_name):
     return obj
 
 ## Paths to all datasets. Change accordingly.
-PATH = '/home/vladimir/teaching/AI/project_01/datasets/tflearn/'
+PATH = './data/'
 BEE1_path     = PATH + 'BEE1/'
 BEE2_1S_path  = PATH + 'BEE2_1S/'
 BEE4_path     = PATH + 'BEE4/'
