@@ -104,10 +104,13 @@ def make_image_ann_model():
     fc_layer_1 = fully_connected(input_layer, 128,
                                  activation='relu',
                                  name='fc_layer_1')
-    fc_layer_2 = fully_connected(fc_layer_1, 2,
-                                 activation='softmax',
+    fc_layer_2 = fully_connected(fc_layer_1, 128,
+                                 activation='relu',
                                  name='fc_layer_2')
-    network = regression(fc_layer_2, optimizer='sgd',
+    fc_layer_3 = fully_connected(fc_layer_2, 2,
+                                 activation='softmax',
+                                 name='fc_layer_3')
+    network = regression(fc_layer_3, optimizer='sgd',
                          loss='categorical_crossentropy',
                          learning_rate=0.1)
     model = tflearn.DNN(network)
@@ -120,10 +123,13 @@ def load_image_ann_model(model_path):
     fc_layer_1 = fully_connected(input_layer, 128,
                                  activation='relu',
                                  name='fc_layer_1')
-    fc_layer_2 = fully_connected(fc_layer_1, 2,
-                                 activation='softmax',
+    fc_layer_2 = fully_connected(fc_layer_1, 128,
+                                 activation='relu',
                                  name='fc_layer_2')
-    model = tflearn.DNN(fc_layer_2)
+    fc_layer_3 = fully_connected(fc_layer_2, 2,
+                                 activation='softmax',
+                                 name='fc_layer_3')
+    model = tflearn.DNN(fc_layer_3)
     model.load(model_path)
     return model
 
@@ -153,7 +159,7 @@ def validate_tfl_image_ann_model(model, valid_X, valid_Y):
 
 # Training and Saving Pipeline
 def pipeline():
-    epochs = 50
+    epochs = 100
 
     img_ann = make_image_ann_model()
     # Train it on BEE1_gray
