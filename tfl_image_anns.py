@@ -159,27 +159,39 @@ def validate_tfl_image_ann_model(model, valid_X, valid_Y):
 
 # Training and Saving Pipeline
 def pipeline():
-    epochs = 100
-
+    epochs = 50
+    max_accuracy = 0
+    batch_vs_acc = {}
     img_ann = make_image_ann_model()
-    # Train it on BEE1_gray
-    train_tfl_image_ann_model(img_ann, BEE1_gray_train_X, BEE1_gray_train_Y, BEE1_gray_test_X, BEE1_gray_test_Y, num_epochs=epochs)
-    # Validate BEE1_GRAY
-    print("BEE1_gray", validate_tfl_image_ann_model(img_ann, BEE1_gray_valid_X, BEE1_gray_valid_Y))
+    for batch_size in [8,16,32]:
+        # Train it on BEE1_gray
+        train_tfl_image_ann_model(img_ann, BEE1_gray_train_X, BEE1_gray_train_Y, BEE1_gray_test_X, BEE1_gray_test_Y, num_epochs=epochs, batch_size=batch_size)
 
-    # Train it on BEE2_1S_gray
-    train_tfl_image_ann_model(img_ann, BEE2_1S_gray_train_X, BEE2_1S_gray_train_Y, BEE2_1S_gray_test_X, BEE2_1S_gray_test_Y, num_epochs=epochs)
 
-    # Validate BEE2_1S_gray
-    print("BEE2_1S_gray", validate_tfl_image_ann_model(img_ann, BEE2_1S_gray_valid_X, BEE2_1S_gray_valid_Y))
+        # Train it on BEE2_1S_gray
+        train_tfl_image_ann_model(img_ann, BEE2_1S_gray_train_X, BEE2_1S_gray_train_Y, BEE2_1S_gray_test_X, BEE2_1S_gray_test_Y, num_epochs=epochs, batch_size=batch_size)
 
-    # Train it on BEE4_gray
-    train_tfl_image_ann_model(img_ann, BEE4_gray_train_X, BEE4_gray_train_Y, BEE4_gray_test_X, BEE4_gray_test_Y, num_epochs=epochs)
 
-    # Validate BEE4_gray
-    print("BEE4_gray", validate_tfl_image_ann_model(img_ann, BEE4_gray_valid_X, BEE4_gray_valid_Y))
+        # Train it on BEE4_gray
+        train_tfl_image_ann_model(img_ann, BEE4_gray_train_X, BEE4_gray_train_Y, BEE4_gray_test_X, BEE4_gray_test_Y, num_epochs=epochs, batch_size=batch_size)
+        # Validate BEE1_GRAY
+        bee1_acc = validate_tfl_image_ann_model(img_ann, BEE1_gray_valid_X, BEE1_gray_valid_Y)
+        print("BEE1_gray", bee1_acc)
+        # Validate BEE2_1S_gray
+        bee2_acc = validate_tfl_image_ann_model(img_ann, BEE2_1S_gray_valid_X, BEE2_1S_gray_valid_Y)
+        print("BEE2_1S_gray", bee2_acc)
+        # Validate BEE4_gray
+        bee4_acc = validate_tfl_image_ann_model(img_ann, BEE4_gray_valid_X, BEE4_gray_valid_Y)
+        print("BEE4_gray", bee4_acc)
+        mean_acc = (bee1_acc + bee2_acc + bee4_acc) / 3
 
-    img_ann.save("models/img_ann.tfl")
+        # save stats to dictionary
+        batch_vs_acc[f"bee1_{batch_size}"] = bee1_acc
+        batch_vs_acc[f"bee2_{batch_size}"] = bee2_acc
+        batch_vs_acc[f"bee4_{batch_size}"] = bee4_acc
+
+        if mean_acc > max_accuracy:
+            img_ann.save("models/img_ann.tfl")
 # Execute pipeline
 def main():
     pipeline()
