@@ -112,7 +112,7 @@ def make_image_ann_model():
                                  name='fc_layer_3')
     network = regression(fc_layer_3, optimizer='sgd',
                          loss='categorical_crossentropy',
-                         learning_rate=0.1)
+                         learning_rate=0.01)
     model = tflearn.DNN(network)
     return model
 
