@@ -1,2 +1,2 @@
-model_checkpoint_path: "/Users/bridger/BeeProject/models/img_ann.tfl"
-all_model_checkpoint_paths: "/Users/bridger/BeeProject/models/img_ann.tfl"
+model_checkpoint_path: "/Users/bridger/BeeProject/models/img_cn.tfl"
+all_model_checkpoint_paths: "/Users/bridger/BeeProject/models/img_cn.tfl"

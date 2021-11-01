@@ -20,7 +20,7 @@ def load(file_name):
     return obj
 
 ## Paths to all datasets. Change accordingly.
-base_path = './data'
+base_path = './data/'
 BUZZ1_base_path = base_path + 'BUZZ1/'
 BUZZ2_base_path = base_path + 'BUZZ2/'
 BUZZ3_base_path = base_path + 'BUZZ3/'
