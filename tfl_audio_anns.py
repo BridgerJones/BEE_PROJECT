@@ -19,7 +19,7 @@ def load(file_name):
     return obj
 
 ## Paths to all datasets. Change accordingly.
-PATH = '/home/vladimir/teaching/AI/project_01/datasets/tflearn/'
+PATH = './data'
 BUZZ1_base_path = PATH + 'BUZZ1/'
 BUZZ2_base_path = PATH + 'BUZZ2/'
 BUZZ3_base_path = PATH + 'BUZZ3/'
@@ -108,7 +108,7 @@ def make_audio_ann_model():
                                  name='fc_layer_2')
     network = regression(fc_layer_2, optimizer='sgd',
                          loss='categorical_crossentropy',
-                         learning_rate=0.1)
+                         learning_rate=0.01)
     model = tflearn.DNN(network)
     return model
 
@@ -148,3 +148,50 @@ def train_tfl_audio_ann_model(model, train_X, train_Y, test_X, test_Y, num_epoch
 ### validating is testing on valid_X and valid_Y.
 def validate_tfl_audio_ann_model(model, valid_X, valid_Y):
     return test_tfl_audio_ann_model(model, valid_X, valid_Y)
+
+
+# Training and Saving Pipeline
+def pipeline():
+    epochs = 50
+    max_accuracy = 0
+    batch_vs_acc = {}
+    img_ann = make_audio_ann_model()
+
+    for batch_size in [8,16,32]:
+        # Train it on BUZZ1
+        train_tfl_audio_ann_model(img_ann, BUZZ1_train_X, BUZZ1_train_Y, BUZZ1_test_X, BUZZ1_test_Y, num_epochs=epochs, batch_size=batch_size)
+
+
+        # Train it on BUZZ2_gray
+        train_tfl_audio_ann_model(img_ann, BUZZ2_gray_train_X, BUZZ2_gray_train_Y, BUZZ2_gray_test_X, BUZZ2_gray_test_Y, num_epochs=epochs, batch_size=batch_size)
+
+
+        # Train it on BUZZ3
+        train_tfl_audio_ann_model(img_ann, BUZZ3_train_X, BUZZ3_train_Y, BUZZ3_test_X, BUZZ3_test_Y, num_epochs=epochs, batch_size=batch_size)
+        # Validate BUZZ1
+        bee1_acc = validate_tfl_audio_ann_model(img_ann, BUZZ1_valid_X, BUZZ1_valid_Y)
+        print("BUZZ1", bee1_acc)
+        # Validate BUZZ2_gray
+        bee2_acc = validate_tfl_audio_ann_model(img_ann, BUZZ2_gray_valid_X, BUZZ2_gray_valid_Y)
+        print("BUZZ2", bee2_acc)
+        # Validate BUZZ3
+        bee4_acc = validate_tfl_audio_ann_model(img_ann, BUZZ3_valid_X, BUZZ3_valid_Y)
+        print("BUZZ3", bee4_acc)
+        mean_acc = (bee1_acc + bee2_acc + bee4_acc) / 3
+
+        # save stats to dictionary
+        batch_vs_acc[f"BUZZ1_{batch_size}"] = bee1_acc
+        batch_vs_acc[f"BUZZ2_{batch_size}"] = bee2_acc
+        batch_vs_acc[f"BUZZ3_{batch_size}"] = bee4_acc
+
+        if mean_acc > max_accuracy:
+            img_ann.save("models/aud_ann.tfl")
+    for key, value in batch_vs_acc.items():
+        print(key, value)
+    with open("stats/BUZZ_ann_stats.pickle", "wb") as file:
+        pickle.dump(batch_vs_acc, file)
+# Execute pipeline
+def main():
+    pipeline()
+if __name__ == '__main__':
+    main()

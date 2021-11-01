@@ -163,6 +163,7 @@ def pipeline():
     max_accuracy = 0
     batch_vs_acc = {}
     img_ann = make_image_ann_model()
+
     for batch_size in [8,16,32]:
         # Train it on BEE1_gray
         train_tfl_image_ann_model(img_ann, BEE1_gray_train_X, BEE1_gray_train_Y, BEE1_gray_test_X, BEE1_gray_test_Y, num_epochs=epochs, batch_size=batch_size)
@@ -192,6 +193,10 @@ def pipeline():
 
         if mean_acc > max_accuracy:
             img_ann.save("models/img_ann.tfl")
+    for key, value in batch_vs_acc.items():
+        print(key, value)
+    with open("stats/image_ann_stats.pickle", "wb") as file:
+        pickle.dump(batch_vs_acc, file)
 # Execute pipeline
 def main():
     pipeline()

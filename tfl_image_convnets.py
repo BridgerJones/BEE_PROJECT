@@ -22,7 +22,7 @@ def load(file_name):
 ## Paths to all datasets. Change accordingly.
 PATH = './data/'
 BEE1_path     = PATH + 'BEE1/'
-BEE2_1S_path  = PATH + 'BEE2_1S/'
+BEE2_path  = PATH + 'BEE2_1S/'
 BEE4_path     = PATH + 'BEE4/'
 
 ## let's load BEE1
@@ -51,27 +51,27 @@ assert BEE1_test_X.shape[0]  == BEE1_test_Y.shape[0]
 assert BEE1_valid_X.shape[0] == BEE1_valid_Y.shape[0]
 
 ## let's load BEE2_1S
-base_path = BEE2_1S_path
+base_path = BEE2_path
 print('loading datasets from {}...'.format(base_path))
-BEE2_1S_train_X = load(base_path + 'train_X.pck')
-BEE2_1S_train_Y = load(base_path + 'train_Y.pck')
-BEE2_1S_test_X = load(base_path + 'test_X.pck')
-BEE2_1S_test_Y = load(base_path + 'test_Y.pck')
-BEE2_1S_valid_X = load(base_path + 'valid_X.pck')
-BEE2_1S_valid_Y = load(base_path + 'valid_Y.pck')
-print(BEE2_1S_train_X.shape)
-print(BEE2_1S_train_Y.shape)
-print(BEE2_1S_test_X.shape)
-print(BEE2_1S_test_Y.shape)
-print(BEE2_1S_valid_X.shape)
-print(BEE2_1S_valid_Y.shape)
+BEE2_train_X = load(base_path + 'train_X.pck')
+BEE2_train_Y = load(base_path + 'train_Y.pck')
+BEE2_test_X = load(base_path + 'test_X.pck')
+BEE2_test_Y = load(base_path + 'test_Y.pck')
+BEE2_valid_X = load(base_path + 'valid_X.pck')
+BEE2_valid_Y = load(base_path + 'valid_Y.pck')
+print(BEE2_train_X.shape)
+print(BEE2_train_Y.shape)
+print(BEE2_test_X.shape)
+print(BEE2_test_Y.shape)
+print(BEE2_valid_X.shape)
+print(BEE2_valid_Y.shape)
 print('datasets from {} loaded...'.format(base_path))
-BEE2_1S_train_X = BEE2_1S_train_X.reshape([-1, 64, 64, 3])
-BEE2_1S_test_X = BEE2_1S_test_X.reshape([-1, 64, 64, 3])
+BEE2_train_X = BEE2_train_X.reshape([-1, 64, 64, 3])
+BEE2_test_X = BEE2_test_X.reshape([-1, 64, 64, 3])
 
-assert BEE2_1S_train_X.shape[0] == BEE2_1S_train_Y.shape[0]
-assert BEE2_1S_test_X.shape[0]  == BEE2_1S_test_Y.shape[0]
-assert BEE2_1S_valid_X.shape[0] == BEE2_1S_valid_Y.shape[0]
+assert BEE2_train_X.shape[0] == BEE2_train_Y.shape[0]
+assert BEE2_test_X.shape[0]  == BEE2_test_Y.shape[0]
+assert BEE2_valid_X.shape[0] == BEE2_valid_Y.shape[0]
 
 ## let's load BEE4
 base_path = BEE4_path
@@ -113,7 +113,7 @@ def make_image_convnet_model():
                                  name='fc_layer_2')
     network = regression(fc_layer_2, optimizer='sgd',
                          loss='categorical_crossentropy',
-                         learning_rate=0.1)
+                         learning_rate=0.01)
     model = tflearn.DNN(network)
     return model
 
@@ -156,3 +156,50 @@ def train_tfl_image_convnet_model(model, train_X, train_Y, test_X, test_Y, num_e
 ### validating is testing on valid_X and valid_Y.
 def validate_tfl_image_convnet_model(model, valid_X, valid_Y):
     return test_tfl_image_convnet_model(model, valid_X, valid_Y)
+
+
+# Training and Saving Pipeline
+def pipeline():
+    epochs = 50
+    max_accuracy = 0
+    batch_vs_acc = {}
+    img_ann = make_image_convnet_model()
+
+    for batch_size in [8,16,32]:
+        # Train it on BEE1_gray
+        train_tfl_image_convnet_model(img_ann, BEE1_train_X, BEE1_train_Y, BEE1_test_X, BEE1_test_Y, num_epochs=epochs, batch_size=batch_size)
+
+
+        # Train it on BEE2_gray
+        train_tfl_image_convnet_model(img_ann, BEE2_train_X, BEE2_train_Y, BEE2_test_X, BEE2_test_Y, num_epochs=epochs, batch_size=batch_size)
+
+
+        # Train it on BEE4_gray
+        train_tfl_image_convnet_model(img_ann, BEE4_train_X, BEE4_train_Y, BEE4_test_X, BEE4_test_Y, num_epochs=epochs, batch_size=batch_size)
+        # Validate BEE1_GRAY
+        bee1_acc = validate_tfl_image_convnet_model(img_ann, BEE1_valid_X, BEE1_valid_Y)
+        print("BEE1_gray", bee1_acc)
+        # Validate BEE2_gray
+        bee2_acc = validate_tfl_image_convnet_model(img_ann, BEE2_valid_X, BEE2_valid_Y)
+        print("BEE2_gray", bee2_acc)
+        # Validate BEE4_gray
+        bee4_acc = validate_tfl_image_convnet_model(img_ann, BEE4_valid_X, BEE4_valid_Y)
+        print("BEE4_gray", bee4_acc)
+        mean_acc = (bee1_acc + bee2_acc + bee4_acc) / 3
+
+        # save stats to dictionary
+        batch_vs_acc[f"bee1_{batch_size}"] = bee1_acc
+        batch_vs_acc[f"bee2_{batch_size}"] = bee2_acc
+        batch_vs_acc[f"bee4_{batch_size}"] = bee4_acc
+
+        if mean_acc > max_accuracy:
+            img_ann.save("models/img_cn.tfl")
+    for key, value in batch_vs_acc.items():
+        print(key, value)
+    with open("stats/image_cn_stats.pickle", "wb") as file:
+        pickle.dump(batch_vs_acc, file)
+# Execute pipeline
+def main():
+    pipeline()
+if __name__ == '__main__':
+    main()
