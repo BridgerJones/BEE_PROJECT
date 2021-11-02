@@ -169,7 +169,7 @@ def pipeline():
 
 
         # Train it on BUZZ2_gray
-        train_tfl_audio_convnet_model(img_ann, BUZZ2_gray_train_X, BUZZ2_gray_train_Y, BUZZ2_gray_test_X, BUZZ2_gray_test_Y, num_epochs=epochs, batch_size=batch_size)
+        train_tfl_audio_convnet_model(img_ann, BUZZ2_train_X, BUZZ2_train_Y, BUZZ2_test_X, BUZZ2_test_Y, num_epochs=epochs, batch_size=batch_size)
 
 
         # Train it on BUZZ3
@@ -178,7 +178,7 @@ def pipeline():
         bee1_acc = validate_tfl_audio_convnet_model(img_ann, BUZZ1_valid_X, BUZZ1_valid_Y)
         print("BUZZ1", bee1_acc)
         # Validate BUZZ2_gray
-        bee2_acc = validate_tfl_audio_convnet_model(img_ann, BUZZ2_gray_valid_X, BUZZ2_gray_valid_Y)
+        bee2_acc = validate_tfl_audio_convnet_model(img_ann, BUZZ2_valid_X, BUZZ2_valid_Y)
         print("BUZZ2", bee2_acc)
         # Validate BUZZ3
         bee4_acc = validate_tfl_audio_convnet_model(img_ann, BUZZ3_valid_X, BUZZ3_valid_Y)
