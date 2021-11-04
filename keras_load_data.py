@@ -10,7 +10,7 @@ import numpy as np
 import tensorflow as tf
 from skimage import io, color, transform
 
-basepath='/home/vladimir/teaching/AI/project_01/datasets/'
+basepath='./data/'
 IMG_WIDTH  = 64
 IMG_HEIGHT = 64
 
@@ -57,9 +57,9 @@ def image_process(file_paths, gray_scale=False, normalize=True, to_categorical=T
     image_process() is used to convert images for input to keras nets.
     file_paths is an array of string file paths to individual images.
     to_categorial, when True, is being used for tensorfolow one-hot encoding (e.g., [0, 0, 1] if there
-    are 3 classes.) This function is OpenCV independent; it is dependent on 
+    are 3 classes.) This function is OpenCV independent; it is dependent on
     skimage.io, skimage.color, and skiimage.transform.
-    """    
+    """
     global IMG_HEIGHT, IMG_WIDTH, num_classes
     print('**************** CHECK 0000 ****************')
     batchX = []

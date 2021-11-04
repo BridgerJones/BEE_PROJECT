@@ -21,7 +21,7 @@ tf.random.set_seed(1234)
 
 ### change as necessary; this is the path where ConvNet models
 ### are persisted.
-MODEL_PATH = '/home/vladimir/teaching/AI/project_01/keras_models'
+MODEL_PATH = './models/'
 MODEL_NAME = 'keras_img_model'
 
 # Define a simple sequential model with Keras
@@ -42,13 +42,13 @@ def create_keras_model(learning_rate=0.01, weight_decay=0.001, dropout=0.2):
                   metrics=['accuracy'])
     return model
 
-def train_keras_model(learning_rate=0.01, weight_decay=0.001, dropout=0.2, epochs=5):
+def train_keras_model(learning_rate=0.01, weight_decay=0.001, dropout=0.2, epochs=50):
     # Create a basic model instance
     model = create_keras_model(learning_rate, weight_decay, dropout)
-    
+
     # Display the model's architecture
     model.summary()
-    
+
     checkpoint_filepath = MODEL_PATH + '/' + MODEL_NAME
     model_checkpoint_callback = keras.callbacks.ModelCheckpoint(filepath=checkpoint_filepath,
                                                                 save_weights_only=True,
@@ -62,7 +62,7 @@ def train_keras_model(learning_rate=0.01, weight_decay=0.001, dropout=0.2, epoch
               epochs=epochs,
               callbacks=[model_checkpoint_callback])
     model.save(MODEL_PATH + '/' + 'keras_img_model' + '.h5')
-    
+
 def load_keras_model():
     km = create_keras_model(learning_rate=0.01, weight_decay=0.001, dropout=0.2)
     km.load_weights(MODEL_PATH + '/' + MODEL_NAME + '.h5')
@@ -85,7 +85,10 @@ def evaluate_keras_model(model):
 
   return [train_loss, train_acc, test_loss, test_acc, valid_loss, valid_acc]
 
+def pipeline():
+     train_keras_model()
+
 ### ========================================================================
 
 if __name__ == '__main__':
-    pass
+    pipeline()

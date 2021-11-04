@@ -1,2 +1,2 @@
-model_checkpoint_path: "/Users/bridger/BeeProject/models/aud_cn.tfl"
-all_model_checkpoint_paths: "/Users/bridger/BeeProject/models/aud_cn.tfl"
+model_checkpoint_path: "keras_img_model"
+all_model_checkpoint_paths: "keras_img_model"
